@@ -1,3 +1,83 @@
 body {
     text-align: center;
 }
+
+.hide {
+    display: none;
+}
+
+/* Winner Modal*/
+.winner-modal, .char-modal{
+    position: absolute;    
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0,0,0,0.438);
+}
+
+/* Modals Content */
+.winner-content, .char-content {
+    position: relative;
+    background-color: #fefefe;
+    transform: translate(-50%, -70%);
+    width: 600px;
+    height: 400px;
+   top: 60%;
+   left: 50%;
+}
+
+
+
+/* Modal Header */
+.winner-header, .char-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.5rem;
+    border-bottom: 1px solid gray;
+}
+
+/* Modal Results Section */
+.winner-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid gray;
+}
+
+.char-results {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid gray;
+}
+
+/* odal Buttons Section */
+.winner-buttons .char-buttons {
+    display: flex;
+    justify-content: space-around;
+    padding: 1rem;
+}
+
+/* Modal Buttons */
+.replay-button .char-button{
+    
+    width: 60px;
+    height: 60px;
+}
+
+.char-img {
+    width: 60px;
+    height: 60px
+   
+}
+
+.char-results {
+    display: flex-inline;
+    justify-content: space-around;
+   
+}
+

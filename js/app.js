@@ -1,9 +1,13 @@
 
+ //Timer variables
+ let seconds = 0, minutes = 0;
 
-
+ //Value for checking if timer running
+ let timerStatus = false;
+ let timeCounter;
 
 // Enemies our player must avoid
-var Enemy = function(x, y, speed) {
+let Enemy = function(x, y, speed) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
 
@@ -23,12 +27,12 @@ Enemy.prototype.update = function(dt) {
     // which will ensure the game runs at the same speed for
     // all computers.
     if(this.enemy_x < 404) {
-        this.enemy_x += this.speed * dt;        
+        this.enemy_x += this.speed * dt;
     }
     else {
         this.enemy_x = 0;
-        let newSpeed = Math.floor(Math.random() * 5 + 1);
-        this.speed = 100 * newSpeed;
+        this.speed = 100 + Math.floor(Math.random() * 200);
+        
     }
 };
 
@@ -40,111 +44,163 @@ Enemy.prototype.render = function() {
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-class MainPlayer {
-    constructor() {
-        this.sprite = 'images/char-boy.png';       
+
+let Player = function() {
+    this.sprite = 'images/char-boy.png';
         this.horizontalMove = 101;
         this.verticalMove = 83;
         this.player_x = 202;
         this.player_y = 387;
 
-        this.gem1 =  'images/Gem Blue.png';
-        this.gem2 =  'images/Gem Green.png';
-        this.gem3 =  'images/Gem Orange.png';
-        this.gem4 =  'images/Heat.png';
-        this.gem5 =  'images/Key.png';
+        this.moves = 0;
+        this.time = 0;
+        this.winner = false;
+        this.gems = 0;
+};
 
-        const gemList = [];
-        gemList.push(this.gem1, this.gem2, this.gem3, this.gem4, this.gem5);
-        console.log(gemList);
-
-        //Shuffle card pack
-        const shuffledGems = shuffle(gemList);
-        console.log(shuffledGems);
-
-        
- 
-    // Shuffle function from http://stackoverflow.com/a/2450976
-    
-
+Player.prototype.handleInput = function(action) {
+    if(action == 'left' && this.player_x > 0) {
+        this.player_x -= this.horizontalMove;
     }
-
-    handleInput(action) {
-        if(action == 'left' && this.player_x > 0) {           
-            this.player_x -= this.horizontalMove;            
-        }
-        else if(action == 'right' && this.player_x < 404) {
-            this.player_x += this.horizontalMove;
-        }
-        else if(action == 'up' && this.player_y > 0) {
-            this.player_y -= this.verticalMove;
-        }
-        else if(action == 'down' && this.player_y < 387) {
-            this.player_y += this.verticalMove;
-        }
+    else if(action == 'right' && this.player_x < 404) {
+        this.player_x += this.horizontalMove;
     }
-
-    render () {
-        //console.log(this.x + ' ' + this.player_y);
-        ctx.drawImage(Resources.get(this.sprite), this.player_x, this.player_y);
-
-        ctx.drawImage(Resources.get(this.sprite), 81, 101);
+    else if(action == 'up' && this.player_y > 0) {
+        this.player_y -= this.verticalMove;
     }
+    else if(action == 'down' && this.player_y < 387) {
+        this.player_y += this.verticalMove;
+    }
+   
+};
 
-    update() {
-        let enemy;
+Player.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.player_x, this.player_y);
+
+    ctx.font = '16pt Chango';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#fff';
+  
+    // Draw player's score
+    ctx.fillText('Score: ' + this.moves, 353, 80);
+    // Draw player's number of gems
+    ctx.fillText('Gems: ' + this.gems, 230, 80);
+};
+
+Player.prototype.update = function() {
+    let enemy;
         for (enemy of allEnemies) {
-            if((this.player_y === enemy.enemy_y) && 
-                (enemy.enemy_x + 65/2 > this.player_x) && 
-                (enemy.enemy_x < this.player_x + 65/2)) {
-                alert('collide');
+            if((this.player_y === enemy.enemy_y) && (enemy.enemy_x + 65/2 > this.player_x) && (enemy.enemy_x < this.player_x + 65/2)) {
+                this.moves ++;
                 player.reset();
             }
-            if(this.player_y === -28) {
-               //alert('winner');
-               //switch if square 1 get 1 image from array and display
-               ctx.drawImage(Resources.get(this.sprite), 200, 200);
-               player.reset();
-                
+
+            // Check for gem collision
+            for (var i = 0; i < allGems.length; i++) {
+               
+                if (this.player_x == allGems[i].x &&
+                    //this.player_x < allGems[i].x + 54 &&
+                    this.player_y == allGems[i].y ){
+                    //this.player_y < allGems[i].y + 77 + 66) {
+                    // Collision is true, move target out of field of play
+                this.gems++;
+                    //allGems[i].y += 500;
+                    allGems.pop(allGems[i]);
+                    //player.reset();
+                    //this.score += 20;
+                    //this.gems += 1;
+                }
+            }
+  
+
+            if(this.player_y === -28 ) {
+                this.moves++;
+                this.winner = true;
+                player.reset();
+                if(allGems.length === 0){
+                    player.resetGems();
+                }
+               
            }
-           // console.log('Player Y: ' + this.player_y + ' Enemy Y: ' + enemy.enemy_y );
-            //console.log('Player X: ' + this.player_x + ' Enemy X: ' + enemy.enemy_x);
         }
+};
 
-        
-    }
+Player.prototype.reset = function(){
+    this.player_x = 202;
+    this.player_y = 387;
+   // Remove all enemy instances
+   //var enemiesArrayLength = allEnemies.length;
+   //for (var i = 0; i < enemiesArrayLength; i++) {
+    //   allEnemies.pop();
+   //}
+   // Remove all gem instances
+   
+};
 
-    checkCollisions()  {
+Player.prototype.resetGems = function() {
+    var gemsArrayLength = allGems.length;
+   for (var x = 0; x < gemsArrayLength; x++) {
+       allGems.pop();
+   }
+   createGems();
+};
 
-    }
 
-    reset() {
-      if(status) {
 
-      }
-      else{
 
-      }
-            this.player_x = 202;
-        this.player_y = 387;
-      
-        
-    }
 
+    
+
+
+
+var Gem = function(x, y, sprite) {
+    this.x = x;
+    this.y = y;
+    this.sprite = sprite;
+};
+
+// Draw the gem on the screen
+Gem.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+// Random number generator from MDN documentation
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/
+// Global_Objects/Math/random
+function getRandomNumber(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+// Instantiate gem objects
+// Place all gem objects in an array called allGems
+var allGems = [];
 
-    while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
+// Creates an array of 3 gem instances
+function createGems() {
+    for (var i = 0; i < 3; i++) {
+        // Pick random col for gem to be on
+        var col = getRandomNumber(0, 4) * 101;
+        console.log('col ' + col);
+        // Pick random row of stones for gem to be on
+        var row = (getRandomNumber(1, 3) * 83) - 28;
+        console.log('row ' + row);
+        // Assign gem image
+        if (i === 1) {
+            sprite = 'images/Gem Blue.png';
+        } else if (i === 2) {
+            sprite = 'images/Gem Green.png';
+        } else {
+            sprite = 'images/Gem Orange.png';
+        }
+        // Create gem instance
+        var gem = allGems.push(new Gem(col, row, sprite));
     }
-    return array;
-}
+};
+
+createGems();
+
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
@@ -153,10 +209,10 @@ function shuffle(array) {
 const enemy1 = new Enemy(-101, 0, 200);
 const enemy2 = new Enemy(-101, 83, 400);
 const enemy3 = new Enemy((-252.50) , 166, 300);
-const player = new MainPlayer();
+const player = new Player();
+
 const allEnemies = [];
 allEnemies.push(enemy1, enemy2, enemy3);
-console.log(allEnemies);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
@@ -170,3 +226,118 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
+
+/*class MainPlayer {
+    constructor() {
+        this.sprite = 'images/char-boy.png';
+        this.horizontalMove = 101;
+        this.verticalMove = 83;
+        this.player_x = 202;
+        this.player_y = 387;
+
+        this.moves = 0;
+        this.time = 0;
+        this.score = 0;
+    }
+
+    handleInput(action) {
+        if(action == 'left' && this.player_x > 0) {
+            this.player_x -= this.horizontalMove;
+        }
+        else if(action == 'right' && this.player_x < 404) {
+            this.player_x += this.horizontalMove;
+        }
+        else if(action == 'up' && this.player_y > 0) {
+            this.player_y -= this.verticalMove;
+        }
+        else if(action == 'down' && this.player_y < 387) {
+            this.player_y += this.verticalMove;
+        }
+    }
+
+    render () {
+
+        ctx.drawImage(Resources.get(this.sprite), this.player_x, this.player_y);
+
+        if(g1.status) {
+            ctx.drawImage(Resources.get(g1.gemImg), 0, -28);
+        }
+        if(g2.status) {
+            ctx.drawImage(Resources.get(g2.gemImg), 101, -28);
+        }
+        if(g3.status) {
+            ctx.drawImage(Resources.get(g3.gemImg), 202, -28);
+        }
+        if(g4.status) {
+            ctx.drawImage(Resources.get(g4.gemImg), 303, -28);
+            
+        }
+        if(g5.status) {
+            ctx.drawImage(Resources.get(g5.gemImg), 404, -28);
+        }
+    }
+
+    update() {
+        let enemy;
+        for (enemy of allEnemies) {
+            if((this.player_y === enemy.enemy_y) && (enemy.enemy_x + 65/2 > this.player_x) && (enemy.enemy_x < this.player_x + 65/2)) {
+                alert('collide');
+                this.moves ++;
+                player.reset();
+            }
+
+            if(this.player_y === -28) {
+
+                if(this.player_x == 0 && g1.status != true) {
+                    g1.status = true;
+                    this.score++;
+                }
+                if(this.player_x == 101 && g2.status != true) {
+                    g2.status = true;
+                    this.score++;
+                }
+                if(this.player_x == 202 && g3.status != true) {
+                    g3.status = true;
+                    this.score++;
+                }
+                if(this.player_x == 303 && g4.status != true) {
+                    g4.status = true;
+                    this.score++;
+                }
+                if(this.player_x == 404 && g5.status != true) {
+                    g5.status = true;
+                    this.score++;
+                }
+                this.moves++;
+
+                console.log('sc ' + this.score);
+                player.reset();
+           }
+
+        }
+    }
+
+    reset() {
+        this.player_x = 202;
+        this.player_y = 387;
+        ctx.drawImage(Resources.get('images/water-block.png'), 202, -28);
+    }
+}
+
+let Gem = function(gemImg){
+    this.status = false;
+    this.gemImg = gemImg;
+};*/
+
+
+
+
+/*const g1 = new Gem('images/Heart.png');
+const g2 = new Gem('images/Gem Green.png');
+const g3 = new Gem('images/Gem Orange.png');
+const g4 = new Gem('images/Gem Blue.png');
+const g5 = new Gem('images/Key.png');*/
+
+
+

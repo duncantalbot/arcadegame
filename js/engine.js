@@ -22,12 +22,46 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime;
+        lastTime,
+        load_id;
 
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
 
+    const winnerModal = document.querySelector('.winner-modal');    
+    const replayButton = document.querySelector('.replay-button');   
+    const charModal = document.querySelector('.char-modal');    
+    const charButton = document.querySelector('.char-button');   
+    const charChangeButton = document.querySelector('.change-char-button');
+    const charBoy = document.querySelector('.char-img-boy'); 
+    const charCatGirl = document.querySelector('.char-img-cat-girl');
+    const charHornGirl= document.querySelector('.char-img-horn-girl');
+    
+    const charPinkGirl = document.querySelector('.char-img-pink-girl');
+    const charPrincessGirl = document.querySelector('.char-img-princess-girl');
+
+    replayButton.addEventListener('click', () => {
+        toggleFinishModal();
+        player.reset();
+        player.winner = false;        
+        win.requestAnimationFrame(main);
+    });
+
+    charButton.addEventListener('click', () => {
+        toggleCharModal();
+    });
+
+    charChangeButton.addEventListener('click', () => {
+        toggleCharModal();
+    })
+
+    charBoy.addEventListener('click', () => { player.sprite = 'images/char-boy.png'; toggleCharModal();});
+    charCatGirl.addEventListener('click', () => { player.sprite = 'images/char-cat-girl.png'; toggleCharModal();});
+    charHornGirl.addEventListener('click', () => { player.sprite = 'images/char-horn-girl.png'; toggleCharModal();});
+    charPinkGirl.addEventListener('click', () => { player.sprite = 'images/char-pink-girl.png'; toggleCharModal();});
+    charPrincessGirl.addEventListener('click', () => { player.sprite = 'images/char-princess-girl.png'; toggleCharModal();});
+  
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
      */
@@ -55,7 +89,27 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
-        win.requestAnimationFrame(main);
+        if(player.winner ){
+
+            win.cancelAnimationFrame(load_id);
+            //ctx.clearRect(0,0,canvas.width,canvas.height);
+            toggleFinishModal();
+          
+        }
+        else{
+           load_id = win.requestAnimationFrame(main);
+        }
+       
+    }
+
+    function toggleFinishModal(){
+
+        winnerModal.classList.toggle('hide');
+    }
+
+    function toggleCharModal(){
+
+        charModal.classList.toggle('hide');
     }
 
     /* This function does some initial setup that should only occur once,
@@ -65,6 +119,7 @@ var Engine = (function(global) {
     function init() {
         reset();
         lastTime = Date.now();
+ 
         main();
     }
 
@@ -95,6 +150,9 @@ var Engine = (function(global) {
         });
         player.update();
     }
+
+    
+  
 
     /* This function initially draws the "game level", it will then call
      * the renderEntities function. Remember, this function is called every
@@ -153,7 +211,15 @@ var Engine = (function(global) {
             enemy.render();
         });
 
+         /* Loop through all of the objects within the allGems array and call
+         * the render function you have defined.
+         */
+        allGems.forEach(function(gem) {
+            gem.render();
+        });
+
         player.render();
+       
     }
 
     /* This function does nothing but it could have been a good place to
@@ -173,7 +239,18 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-boy.png',
+        'images/Gem Blue.png',
+        'images/Gem Green.png',
+        'images/Gem Orange.png',
+        'images/Heart.png',
+        'images/Key.png',
+        'images/Selector.png',
+        'images/Star.png',
+        'images/char-cat-girl.png',
+        'images/char-horn-girl.png',
+        'images/char-pink-girl.png',
+        'images/char-princess-girl.png'
     ]);
     Resources.onReady(init);
 
