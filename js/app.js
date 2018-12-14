@@ -1,10 +1,5 @@
 
- //Timer variables
- let seconds = 0, minutes = 0;
 
- //Value for checking if timer running
- let timerStatus = false;
- let timeCounter;
 
 // Enemies our player must avoid
 let Enemy = function(x, y, speed) {
@@ -31,7 +26,7 @@ Enemy.prototype.update = function(dt) {
     }
     else {
         this.enemy_x = 0;
-        this.speed = 100 + Math.floor(Math.random() * 200);
+        this.speed = 100 + Math.floor(Math.random() * 100);
         
     }
 };
@@ -98,27 +93,20 @@ Player.prototype.update = function() {
             // Check for gem collision
             for (var i = 0; i < allGems.length; i++) {
                
-                if (this.player_x == allGems[i].x &&
-                    //this.player_x < allGems[i].x + 54 &&
-                    this.player_y == allGems[i].y ){
-                    //this.player_y < allGems[i].y + 77 + 66) {
-                    // Collision is true, move target out of field of play
-                this.gems++;
-                    //allGems[i].y += 500;
-                    allGems.pop(allGems[i]);
-                    //player.reset();
-                    //this.score += 20;
-                    //this.gems += 1;
+                if ((this.player_x === allGems[i].x) && (this.player_y === allGems[i].y )) {                   
+                    this.gems++;                 
+                    allGems[i].y = 1000;
                 }
             }
-  
 
             if(this.player_y === -28 ) {
                 this.moves++;
-                this.winner = true;
+             
                 player.reset();
-                if(allGems.length === 0){
+                if(this.gems === 3){
                     player.resetGems();
+                    this.gems = 0;
+                    this.winner = true;
                 }
                
            }
@@ -128,13 +116,6 @@ Player.prototype.update = function() {
 Player.prototype.reset = function(){
     this.player_x = 202;
     this.player_y = 387;
-   // Remove all enemy instances
-   //var enemiesArrayLength = allEnemies.length;
-   //for (var i = 0; i < enemiesArrayLength; i++) {
-    //   allEnemies.pop();
-   //}
-   // Remove all gem instances
-   
 };
 
 Player.prototype.resetGems = function() {
@@ -144,14 +125,6 @@ Player.prototype.resetGems = function() {
    }
    createGems();
 };
-
-
-
-
-
-    
-
-
 
 var Gem = function(x, y, sprite) {
     this.x = x;
@@ -187,20 +160,23 @@ function createGems() {
         var row = (getRandomNumber(1, 3) * 83) - 28;
         console.log('row ' + row);
         // Assign gem image
-        if (i === 1) {
+        if (i === 0) {
             sprite = 'images/Gem Blue.png';
-        } else if (i === 2) {
+        } else if (i === 1) {
             sprite = 'images/Gem Green.png';
         } else {
             sprite = 'images/Gem Orange.png';
         }
         // Create gem instance
-        var gem = allGems.push(new Gem(col, row, sprite));
+        allGems.push(new Gem(col, row, sprite));
+        
     }
+    console.log('Gems 1 ' + allGems[0].x + ' y' + allGems[0].y);
+    console.log('Gems 2 ' + allGems[1].x + ' y' + allGems[1].y);
+    console.log('Gems 3 ' + allGems[2].x + ' y' + allGems[2].y);
 };
 
 createGems();
-
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
@@ -226,118 +202,6 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
-
-
-/*class MainPlayer {
-    constructor() {
-        this.sprite = 'images/char-boy.png';
-        this.horizontalMove = 101;
-        this.verticalMove = 83;
-        this.player_x = 202;
-        this.player_y = 387;
-
-        this.moves = 0;
-        this.time = 0;
-        this.score = 0;
-    }
-
-    handleInput(action) {
-        if(action == 'left' && this.player_x > 0) {
-            this.player_x -= this.horizontalMove;
-        }
-        else if(action == 'right' && this.player_x < 404) {
-            this.player_x += this.horizontalMove;
-        }
-        else if(action == 'up' && this.player_y > 0) {
-            this.player_y -= this.verticalMove;
-        }
-        else if(action == 'down' && this.player_y < 387) {
-            this.player_y += this.verticalMove;
-        }
-    }
-
-    render () {
-
-        ctx.drawImage(Resources.get(this.sprite), this.player_x, this.player_y);
-
-        if(g1.status) {
-            ctx.drawImage(Resources.get(g1.gemImg), 0, -28);
-        }
-        if(g2.status) {
-            ctx.drawImage(Resources.get(g2.gemImg), 101, -28);
-        }
-        if(g3.status) {
-            ctx.drawImage(Resources.get(g3.gemImg), 202, -28);
-        }
-        if(g4.status) {
-            ctx.drawImage(Resources.get(g4.gemImg), 303, -28);
-            
-        }
-        if(g5.status) {
-            ctx.drawImage(Resources.get(g5.gemImg), 404, -28);
-        }
-    }
-
-    update() {
-        let enemy;
-        for (enemy of allEnemies) {
-            if((this.player_y === enemy.enemy_y) && (enemy.enemy_x + 65/2 > this.player_x) && (enemy.enemy_x < this.player_x + 65/2)) {
-                alert('collide');
-                this.moves ++;
-                player.reset();
-            }
-
-            if(this.player_y === -28) {
-
-                if(this.player_x == 0 && g1.status != true) {
-                    g1.status = true;
-                    this.score++;
-                }
-                if(this.player_x == 101 && g2.status != true) {
-                    g2.status = true;
-                    this.score++;
-                }
-                if(this.player_x == 202 && g3.status != true) {
-                    g3.status = true;
-                    this.score++;
-                }
-                if(this.player_x == 303 && g4.status != true) {
-                    g4.status = true;
-                    this.score++;
-                }
-                if(this.player_x == 404 && g5.status != true) {
-                    g5.status = true;
-                    this.score++;
-                }
-                this.moves++;
-
-                console.log('sc ' + this.score);
-                player.reset();
-           }
-
-        }
-    }
-
-    reset() {
-        this.player_x = 202;
-        this.player_y = 387;
-        ctx.drawImage(Resources.get('images/water-block.png'), 202, -28);
-    }
-}
-
-let Gem = function(gemImg){
-    this.status = false;
-    this.gemImg = gemImg;
-};*/
-
-
-
-
-/*const g1 = new Gem('images/Heart.png');
-const g2 = new Gem('images/Gem Green.png');
-const g3 = new Gem('images/Gem Orange.png');
-const g4 = new Gem('images/Gem Blue.png');
-const g5 = new Gem('images/Key.png');*/
 
 
 
