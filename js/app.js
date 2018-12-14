@@ -77,7 +77,7 @@ Player.prototype.render = function() {
     ctx.fillStyle = '#fff';
   
     // Draw player's score
-    ctx.fillText('Score: ' + this.moves, 353, 80);
+    ctx.fillText('Moves: ' + this.moves, 353, 80);
     // Draw player's number of gems
     ctx.fillText('Gems: ' + this.gems, 230, 80);
 };
