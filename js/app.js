@@ -40,7 +40,7 @@ let Enemy = function(x, y, speed) {
 
     this.enemy_x = x;
     this.enemy_y = y + 55;
-    this.speed = speed;
+    this.speed = speed;   
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
@@ -80,6 +80,7 @@ let Player = function() {
     this.moves = 0;
     this.score = 0;
     this.gems = 0;
+    this.level = 1;
 };
 
 Player.prototype.handleInput = function(action) {
@@ -105,8 +106,9 @@ Player.prototype.render = function() {
     ctx.fillStyle = '#fff';
 
     // Draw player's score
-    ctx.fillText('Score: ' + this.score, 353, 80);
-    ctx.fillText('Time: ' + timer, 120, 80);
+    ctx.fillText('Level: ' + this.level, 383, 80);
+    ctx.fillText('Score: ' + this.score, 223, 80);
+    ctx.fillText('Time: ' + timer, 100, 80);
 };
 
 Player.prototype.update = function() {
@@ -133,6 +135,7 @@ Player.prototype.update = function() {
         if(this.player_y === -28 ) {
             this.moves++;
             this.score++;
+            this.level += 100;
             player.reset();
             // If player has all three gems and made water WINNER!
             if(this.gems === 3){
