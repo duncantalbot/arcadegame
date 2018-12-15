@@ -194,10 +194,8 @@ function createGems() {
     for (var i = 0; i < 3; i++) {
         // Random column number
         var col = getRandomNumber(0, 4) * 101;
-        console.log('col ' + col);
         // Randon row number
         var row = (getRandomNumber(1, 3) * 83) - 28;
-        console.log('row ' + row);
         // Assign gem images to array
         if (i === 0) {
             sprite = 'images/Gem Blue.png';
