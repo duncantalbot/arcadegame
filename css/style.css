@@ -6,9 +6,9 @@ body {
     display: none;
 }
 
-/* Winner Modal*/
+/* Winner Modal / start modal*/
 .winner-modal, .char-modal{
-    position: absolute;    
+    position: absolute;
     top: 0;
     left: 0;
     height: 100%;
@@ -26,8 +26,6 @@ body {
    top: 60%;
    left: 50%;
 }
-
-
 
 /* Modal Header */
 .winner-header, .char-header{
@@ -47,24 +45,15 @@ body {
     border-bottom: 1px solid gray;
 }
 
-.char-results {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 1rem;
-    border-bottom: 1px solid gray;
-}
-
 /* odal Buttons Section */
-.winner-buttons .char-buttons {
+.winner-buttons {
     display: flex;
     justify-content: space-around;
     padding: 1rem;
 }
 
 /* Modal Buttons */
-.replay-button .char-button{
-    
+.replay-button {
     width: 60px;
     height: 60px;
 }
@@ -72,12 +61,4 @@ body {
 .char-img {
     width: 60px;
     height: 60px
-   
 }
-
-.char-results {
-    display: flex-inline;
-    justify-content: space-around;
-   
-}
-
