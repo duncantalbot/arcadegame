@@ -51,7 +51,7 @@ To run arcade game open index.html file in your favorite browser.
 
 ## Authors
 
-* *Duncan Talbot* - *Initial work* - [Classic Arcade Game](https://talbstools.github.io/classicarcadegame/)
+* *Duncan Talbot* - *Initial work* - [Classic Arcade Game](https://talbstools.github.io/arcadegame/)
 
 ## Acknowledgments
 
