@@ -6,7 +6,7 @@ body {
     display: none;
 }
 
-/* Winner Modal / start modal*/
+/* Winner Modal / Start modal*/
 .winner-modal, .char-modal{
     position: absolute;
     top: 0;
@@ -43,13 +43,14 @@ body {
 /* Modal Results Section */
 .winner-results {
     display: flex;
+    font-size: 1.5rem;
     flex-direction: column;
     align-items: center;
     padding: 1rem;
     border-bottom: 1px solid gray;
 }
 
-/* odal Buttons Section */
+/* Modal Buttons Section */
 .winner-buttons {
     display: flex;
     justify-content: space-around;

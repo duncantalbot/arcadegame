@@ -14,7 +14,7 @@
 
 ## Description
 
- The Classic Arcade game has been designed for a Udacity Assignment and is based off the classic arcade game frogger. The game consists of navigating your character across the path to the water to get one point.  Collect all gems on way to get an extra 5 points per gem.  If you get hit hit by a enemy you will lose 1 point. Once you have all 3 gems and got to the water you have won the game.  Try to better your time and points each time you play.
+ The Classic Arcade game has been designed for a Udacity Assignment and is based off the classic arcade game frogger. The game consists of navigating your character across the path to the water to get one point.  Object is to collect all gems on way to get an extra 5 points per gem.  If you get hit hit by a enemy you will lose 1 point and a life. Once you have all 3 gems and got to the water you have won the game.  Try to better your time and points each time you play. You have 3 lives.
 
  The classic arcade game project has been designed and built with HTML, CSS and Javascript.  
 

@@ -11,20 +11,13 @@ let allGems = [];
 //Get modal and image elements from DOM
 const winnerModal = document.querySelector('.winner-modal');
 const winnerResults = document.querySelector('.winner-results');
-const replayButton = document.querySelector('.replay-button');
+const winnerHeader = document.querySelector('.winner-header');
 const charModal = document.querySelector('.char-modal');
 const charBoy = document.querySelector('.char-img-boy');
 const charCatGirl = document.querySelector('.char-img-cat-girl');
 const charHornGirl= document.querySelector('.char-img-horn-girl');
 const charPinkGirl = document.querySelector('.char-img-pink-girl');
 const charPrincessGirl = document.querySelector('.char-img-princess-girl');
-
-//Add click event to replay button on finish maodal
-replayButton.addEventListener('click', () => {
-    toggleFinishModal();
-    toggleCharModal();
-    player.reset();
-});
 
 // Add click events to char images to start game.
 charBoy.addEventListener('click', () => { player.sprite = 'images/char-boy.png'; toggleCharModal(); player.startGame();});
@@ -40,7 +33,7 @@ let Enemy = function(x, y, speed) {
 
     this.enemy_x = x;
     this.enemy_y = y + 55;
-    this.speed = speed;   
+    this.speed = speed;
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
@@ -53,13 +46,12 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    if(this.enemy_x < 404) {
-        this.enemy_x += this.speed * dt;
-    }
-    else {
+
+    //Resets if enemy is at end of screen
+    if(this.enemy_x >= 404) {
         this.enemy_x = 0;
-        this.speed = 100 + Math.floor(Math.random() * 100);
     }
+    this.enemy_x += this.speed * dt;
 };
 
 // Draw the enemy on the screen, required method for game
@@ -70,7 +62,6 @@ Enemy.prototype.render = function() {
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-
 let Player = function() {
     this.sprite = 'images/char-boy.png';
     this.horizontalMove = 101;
@@ -80,7 +71,8 @@ let Player = function() {
     this.moves = 0;
     this.score = 0;
     this.gems = 0;
-    this.level = 1;
+    this.lives = 3;
+    this.finish = false;
 };
 
 Player.prototype.handleInput = function(action) {
@@ -98,6 +90,7 @@ Player.prototype.handleInput = function(action) {
     }
 };
 
+//Draw player and scoreboard to canvas.
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.player_x, this.player_y);
 
@@ -106,9 +99,9 @@ Player.prototype.render = function() {
     ctx.fillStyle = '#fff';
 
     // Draw player's score
-    ctx.fillText('Level: ' + this.level, 383, 80);
-    ctx.fillText('Score: ' + this.score, 223, 80);
-    ctx.fillText('Time: ' + timer, 100, 80);
+    ctx.fillText('Lives: ' + this.lives, 395, 570);
+    ctx.fillText('Score: ' + this.score, 260, 570);
+    ctx.fillText('Time: ' + timer, 100, 570);
 };
 
 Player.prototype.update = function() {
@@ -116,9 +109,17 @@ Player.prototype.update = function() {
     for (enemy of allEnemies) {
         if((this.player_y === enemy.enemy_y) && (enemy.enemy_x + 65/2 > this.player_x) && (enemy.enemy_x < this.player_x + 65/2)) {
             this.moves ++;
-            //If scroe greater than remove 1 for collision
+            //If score greater than 0 remove 1 point for collision
             if(this.score > 0) {
                 this.score--;
+            }
+            this.lives--;
+            //Call gamove modal if no more lives
+            if(this.lives <= 0)
+            {
+                toggleFinishModal();
+                this.finish = true;
+                stopTimer();
             }
             player.reset();
         }
@@ -135,18 +136,19 @@ Player.prototype.update = function() {
         if(this.player_y === -28 ) {
             this.moves++;
             this.score++;
-            this.level += 100;
             player.reset();
             // If player has all three gems and made water WINNER!
             if(this.gems === 3){
                 player.resetGems();
                 toggleFinishModal();
+                this.finish = true;
                 stopTimer();
             }
         }
     }
 };
 
+//Reset player position
 Player.prototype.reset = function(){
     this.player_x = 202;
     this.player_y = 387;
@@ -166,11 +168,12 @@ Player.prototype.startGame = function() {
     player.gems = 0;
     player.moves = 0;
     player.score = 0;
+    player.lives = 3;
     seconds = 0;
     minutes = 0;
     timer = 0;
     startTimer();
-}
+};
 
 // GEM object for creating gem instances
 var Gem = function(x, y, sprite) {
@@ -210,15 +213,14 @@ function createGems() {
         // Create new gem with location details and push to gem array
         allGems.push(new Gem(col, row, sprite));
     }
-};
+}
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-
-const enemy1 = new Enemy(-101, 0, 200);
-const enemy2 = new Enemy(-101, 83, 400);
-const enemy3 = new Enemy((-252.50) , 166, 300);
+const enemy1 = new Enemy(-101, 0, 100);
+const enemy2 = new Enemy(-171, 83, 300);
+const enemy3 = new Enemy((-252.50) , 166, 200);
 const player = new Player();
 
 const allEnemies = [];
@@ -266,7 +268,14 @@ function stopTimer() {
 // Toggles hide class from finish modal to show and hide
 function toggleFinishModal() {
     winnerModal.classList.toggle('hide');
-    winnerResults.innerHTML =  `<span>${player.score} Points </br>${timer} Time </span>`;
+    if(player.lives > 0){
+        winnerHeader.innerHTML = `<h3>Congratulations you are a winner</h3>`;
+        winnerResults.innerHTML =  `<span>${player.score} Points </br></br>${timer} Time </span>`;
+    }
+    else {
+        winnerHeader.innerHTML = `<h3>Game Over</h3>`;
+        winnerResults.innerHTML =  `<span>${player.lives} lives left!!</span></br></br>Please try again`;
+    }
 }
 
 // Toggles hide class from start / char modal to show and hide

@@ -22,12 +22,23 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime,
-        load_id;
+        lastTime;
 
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
+
+    const replayButton = document.querySelector('.replay-button');
+    //Add click event to replay button on finish maodal
+replayButton.addEventListener('click', () => {
+    toggleFinishModal();
+    toggleCharModal();
+    player.finish = false;
+    load_id = win.requestAnimationFrame(main);
+    player.resetGems();
+    player.reset();
+    player.startGame();
+});
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -56,7 +67,15 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
-        load_id = win.requestAnimationFrame(main);
+
+         //Disables enemies if game finish and modal box displayed
+        if(player.finish)
+        {
+            win.cancelAnimationFrame(load_id);
+        }
+        else {
+            load_id = win.requestAnimationFrame(main);
+        }
     }
 
     /* This function does some initial setup that should only occur once,
@@ -65,7 +84,7 @@ var Engine = (function(global) {
      */
     function init() {
         reset();
-        lastTime = Date.now(); 
+        lastTime = Date.now();
         main();
     }
 
@@ -80,7 +99,6 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        //checkCollisions();
     }
 
     /* This is called by the update function and loops through all of the
@@ -150,6 +168,7 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
+
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
