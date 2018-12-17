@@ -37,7 +37,7 @@ replayButton.addEventListener('click', () => {
     load_id = win.requestAnimationFrame(main);
     player.resetGems();
     player.reset();
-    player.startGame();
+    //player.startGame();
 });
 
     /* This function serves as the kickoff point for the game loop itself
