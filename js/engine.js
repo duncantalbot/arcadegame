@@ -1,3 +1,4 @@
+'use strict';
 /* Engine.js
  * This file provides the game loop functionality (update entities and render),
  * draws the initial game board on the screen, and then calls the update and
@@ -13,6 +14,7 @@
  * writing app.js a little simpler to work with.
  */
 
+
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -22,7 +24,9 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime;
+        lastTime,
+        load_id;
+        
 
     canvas.width = 505;
     canvas.height = 606;
@@ -30,15 +34,15 @@ var Engine = (function(global) {
 
     const replayButton = document.querySelector('.replay-button');
     //Add click event to replay button on finish maodal
-replayButton.addEventListener('click', () => {
-    toggleFinishModal();
-    toggleCharModal();
-    player.finish = false;
-    load_id = win.requestAnimationFrame(main);
-    player.resetGems();
-    player.reset();
-    //player.startGame();
-});
+    replayButton.addEventListener('click', () => {
+        toggleFinishModal();
+        toggleCharModal();
+        //player.playeFinish = true;
+        load_id = win.requestAnimationFrame(main);
+        gem.resetGems();
+        player.reset();
+        //player.startGame();
+    });
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -69,13 +73,15 @@ replayButton.addEventListener('click', () => {
          */
 
          //Disables enemies if game finish and modal box displayed
-        if(player.finish)
+         //console.log('=GameComplete ' + gameComplete);
+        if(gameStatus == 'Stopped')
         {
             win.cancelAnimationFrame(load_id);
         }
         else {
             load_id = win.requestAnimationFrame(main);
         }
+        
     }
 
     /* This function does some initial setup that should only occur once,
@@ -176,6 +182,7 @@ replayButton.addEventListener('click', () => {
          /* Loop through all of the objects within the allGems array and call
          * the render function .
          */
+        //console.log(allGems);
         allGems.forEach(function(gem) {
             gem.render();
         });
@@ -221,3 +228,4 @@ replayButton.addEventListener('click', () => {
      */
     global.ctx = ctx;
 })(this);
+
