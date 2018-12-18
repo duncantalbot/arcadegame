@@ -1,7 +1,9 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en" dir="ltr">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Effective JavaScript: Frogger</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -11,7 +13,7 @@
             <header class="winner-header"></header>
             <div class="winner-results"></div>
             <div class="winner-buttons">
-                <button type="button" class="replay-button" focus accesskey="13">Replay</button>
+                <button type="button" class="replay-button">Replay</button>
             </div>
         </div>
     </div>
@@ -21,22 +23,20 @@
                 <h3>Select your Character to start</h3>
             </header>
             <div class="char-results">
-                <span class="char-img-boy" accesskey="1"><img src="images/char-boy.png" accesskey="1"></span>
-                <span class="char-img-cat-girl"><img src="images/char-cat-girl.png" accesskey="2"></span>
-                <span class="char-img-horn-girl"><img src="images/char-horn-girl.png" accesskey="3"></span>
-                <span class="char-img-pink-girl"><img src="images/char-pink-girl.png" accesskey="4"></span>
-                <span class="char-img-princess-girl"><img src="images/char-princess-girl.png" accesskey="5"></span>
+                <span class="char-img-boy"><img src="images/char-boy.png" accesskey="1" alt="Boy"></span>
+                <span class="char-img-cat-girl"><img src="images/char-cat-girl.png" accesskey="2" alt="Cat Girl"></span>
+                <span class="char-img-horn-girl"><img src="images/char-horn-girl.png" accesskey="3" alt="Horn Girl"></span>
+                <span class="char-img-pink-girl"><img src="images/char-pink-girl.png" accesskey="4" alt="Pink Girl"></span>
+                <span class="char-img-princess-girl"><img src="images/char-princess-girl.png" accesskey="5" alt="Princess Girl"></span>
             </div>
             <div class="char-instructions">
-                <span>
-                    <ul>
-                        <li>Move your character across path to water without getting hit by enemy. </li>
-                        <li>Use the arrow keys to move character</li>
-                        <li>Collect gems on the way for more points. <strong>5 points</strong></li>
-                        <li>Each crossing worth <strong>1 point</strong></li>
-                        <li>Lose <strong>1 point</strong> if hit by enemy</li>
-                    </ul>
-                </span>
+                <ul>
+                    <li>Move your character across path to water without getting hit by enemy. </li>
+                    <li>Use the arrow keys to move character</li>
+                    <li>Collect gems on the way for more points. <strong>5 points</strong></li>
+                    <li>Each crossing worth <strong>1 point</strong></li>
+                    <li>Lose <strong>1 point</strong> if hit by enemy</li>
+                </ul>
             </div>
         </div>
     </div>

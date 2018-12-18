@@ -8,7 +8,6 @@
 * [Features](#features)
 * [Bugs](#bugs)
 * [License](#license)
-* [Deployment](#deployment)
 * [Authors](#authors)
 * [Acknowledgements](#acknowledgements)
 
@@ -20,10 +19,9 @@
 
 ## Instructions
 
-Download the project files to your computer.  The key files are app.js,, engine.js and index.html. 
-Open files with your favorite editor and start editing.  Visual Studio Code has been used with the initial build https://code.visualstudio.com/ 
+Download / Clone the project files to your computer.  The key files are app.js, engine.js and index.html. 
 
-To run arcade game open index.html file in your favorite browser.
+To run arcade game open downloaded index.html file in your favorite browser or run following link - [Classic Arcade Game](https://talbstools.github.io/arcadegame/)
 
 ## Technologies
 
@@ -44,14 +42,9 @@ To run arcade game open index.html file in your favorite browser.
 
 * The current licensing is free
 
-## Deployment
-
-* Copy / downlaod completed project files to a web server 
-* Set the default page to index.html
-
 ## Authors
 
-* *Duncan Talbot* - *Initial work* - [Classic Arcade Game](https://talbstools.github.io/arcadegame/)
+* *Duncan Talbot* - *Initial work* 
 
 ## Acknowledgments
 

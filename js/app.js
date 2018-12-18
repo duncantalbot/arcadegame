@@ -1,14 +1,17 @@
-
     'use strict';
+
     //Global Variables
     // Timer Variables and Counter
     let timer ='00:00';
     let seconds = 0;
     let minutes = 0;
     let timeCounter;
-    
+    let x_Move = 101;
+    let y_Move = 83;
     let allGems = [];
-    let gameStatus = 'Started';
+
+    //Controls enemy speeds can be expanded for levels
+    const speeds = [300, 200, 100];
 
     //Get modal and image elements from DOM
     const winnerModal = document.querySelector('.winner-modal');
@@ -28,32 +31,22 @@
     charPinkGirl.addEventListener('click', () => { player.sprite = 'images/char-pink-girl.png'; toggleCharModal(); player.startGame();});
     charPrincessGirl.addEventListener('click', () => { player.sprite = 'images/char-princess-girl.png'; toggleCharModal(); player.startGame();});
 
-    //Main Game Class 
+    //Main Game Class
     class Game {
-        constructor() {
-            this.x;
-            this.y;
-            this.speed;
-            this.sprite;
-
-            this.score = 0;
-            this.lives = 3;
+        constructor(x, y, sprite) {
+            this.x = x;
+            this.y = y;
+            this.sprite = sprite;
         }
 
+        //Reset player position on collision
         reset() {
-            this.gems = 0;
-            this.moves = 0;
-            this.score = 0;
-            this.lives = 3;
-            seconds = 0;
-            minutes = 0;
-            timer = 0;
             this.x = 202;
             this.y = 387;
-            gameStatus = 'Started';
         }
 
-        render () {
+        //Render content to canvas
+        render() {
             ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 
             ctx.font = '16pt Arial';
@@ -64,22 +57,14 @@
             ctx.fillText('Lives: ' + player.lives, 395, 570);
             ctx.fillText('Score: ' + player.score, 260, 570);
             ctx.fillText('Time: ' + timer, 100, 570);
-           }
+        }
     }
 
-    // Enemies our player must avoid
+    // Enemies class configures enemies our player must avoid
     class Enemy extends Game {
-        constructor(x, y, speed) {
-            // Variables applied to each of our instances go here,
-            // we've provided one for you to get started
-            super();
-            this.x = x;
-            this.y = y + 55;
-            this.speed = speed;
-
-            // The image/sprite for our enemies, this uses
-            // a helper we've provided to easily load images
-            this.sprite = 'images/enemy-bug.png';
+        constructor(x, y, sprite = 'images/enemy-bug.png') {
+            super(x, y = y + 55, sprite);
+            this.speed = speeds[Math.floor(Math.random() * speeds.length)];
         }
 
         // Update the enemy's position, required method for game
@@ -98,91 +83,67 @@
         }
     }
 
-    // Now write your own player class
-    // This class requires an update(), render() and
+    // Player class with update(), render() and
     // a handleInput() method.
     class Player extends Game {
-        constructor() {
-            super();
-            this.sprite = 'images/char-boy.png';
-            this.horizontalMove = 101;
-            this.verticalMove = 83;
-            this.x = 202;
-            this.y = 387;
-            this.moves = 0;
+        constructor(x, y, sprite = 'images/char-boy.png') {
+            super(x, y, sprite);
             this.gems = 0;
+            this.moves = 0;
+            this.score = 0;
+            this.lives = 3;
         }
 
+        //Start new game method. Resets variables and time
         startGame() {
+            this.gems = 0;
+            this.moves = 0;
+            this.score = 0;
+            this.lives = 3;
+            seconds = 0;
+            minutes = 0;
+            timer = 0;
             startTimer();
-            gameStatus = 'Started';
         }
 
         handleInput(action) {
             if(action == 'left' && this.x > 0) {
-                this.x -= this.horizontalMove;
+                this.x -= x_Move;
             }
             else if(action == 'right' && this.x < 404) {
-                this.x += this.horizontalMove;
+                this.x += x_Move;
             }
             else if(action == 'up' && this.y > 0) {
-                this.y -= this.verticalMove;
+                this.y -= y_Move;
             }
             else if(action == 'down' && this.y < 387) {
-                this.y += this.verticalMove;
+                this.y += y_Move;
             }
         }
 
         update() {
-            let enemy;
-            for (enemy of allEnemies) {
-                if((this.y === enemy.y) && (enemy.x + 65/2 > this.x) && (enemy.x < this.x + 65/2)) {
-                    this.moves ++;
-                    //If score greater than 0 remove 1 point for collision
-                    if(this.score > 0) {
-                        this.score--;
-                    }
-                    this.lives--;
-                    //Call gamove modal if no more lives
-                    if(this.lives <= 0)
-                    {
-                        toggleFinishModal();
-                        gameStatus = 'Stopped';
-                        stopTimer();
-                    }
-                    this.resetPlayer();
+            // Check for gem collision
+            for (var i = 0; i < allGems.length; i++) {
+                if ((this.x === allGems[i].x) && (this.y === allGems[i].y )) {
+                    this.gems++;
+                    this.score += 5;
+                    allGems[i].y = 1000;
                 }
-
-                // Check for gem collision
-                for (var i = 0; i < allGems.length; i++) {
-                    if ((this.x === allGems[i].x) && (this.y === allGems[i].y )) {
-                        this.gems++;
-                        this.score += 5;
-                        allGems[i].y = 1000;
-                    }
-                }
-                // Check if player has made water. Add points
-                if(this.y === -28 ) {
-                    this.moves++;
-                    this.score++;
-                    this.resetPlayer();
-                    // If player has all three gems and made water WINNER!
-                    if(this.gems === 3){
-                        gem.resetGems();
-                        toggleFinishModal();
-                        gameStatus = 'Stopped';
-                        stopTimer();
-                    }
+            }
+            // Check if player has made water. Add points
+            if(this.y === -28 ) {
+                this.moves++;
+                this.score++;
+                this.reset();
+                // If player has all three gems and made water WINNER!
+                if(this.gems === 3) {
+                    gem.resetGems();
+                    toggleFinishModal();
+                    stopTimer();
                 }
             }
         }
-
-        resetPlayer() {
-            this.x = 202;
-            this.y = 387;
-        }
-
-    };
+    }
 
     class Gem extends Game {
         constructor(x, y, sprite) {
@@ -191,62 +152,69 @@
             this.y = y;
             this.sprite = sprite;
         }
-
-        resetGems(){
-            let gemsArrayLength = allGems.length;
-            for (let x = 0; x < gemsArrayLength; x++) {
+        //Clear gems for new random selection
+        resetGems() {
+            while (allGems.length) {
                 allGems.pop();
             }
-            createGems();
-       }
-    };
+            this.createGems();
+        }
+
+        //Create GEMS array with random positions
+        createGems() {
+            for (var i = 0; i < 3; i++) {
+                // Random column number
+                this.x = getRandomNumber(0, 4) * 101;
+                // Randon row number
+                this.y = (getRandomNumber(1, 3) * 83) - 28;
+                // Assign gem images to array
+                if (i === 0) {
+                    this.sprite = 'images/Gem Blue.png';
+                } else if (i === 1) {
+                    this.sprite = 'images/Gem Green.png';
+                } else {
+                    this.sprite = 'images/Gem Orange.png';
+                }
+                // Create new gem with location details and push to gem array
+                allGems.push(new Gem(this.x, this.y, this.sprite));
+            }
+        }
+    }
 
     // Now instantiate your objects.
     // Place all enemy objects in an array called allEnemies
     // Place the player object in a variable called player
-    const enemy1 = new Enemy(-101, 0, 100);
-    const enemy2 = new Enemy(-171, 83, 300);
-    const enemy3 = new Enemy((-252.50) , 166, 200);
-    const player = new Player();
+    const player = new Player(202, 387);
+    const enemy1 = new Enemy(-101, 0);
+    const enemy2 = new Enemy(-171, 83);
+    const enemy3 = new Enemy(-252.50, 166);
     const gem = new Gem();
 
     let allEnemies = [];
     allEnemies.push(enemy1, enemy2, enemy3);
 
-    // Random number generator from MDN documentation
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/
-    function getRandomNumber(min, max) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    // Creating a array for gem instances / shuffled via random number generator
-    function createGems() {
-    let gemSprite;
-
-        for (var i = 0; i < 3; i++) {
-            // Random column number
-            var col = getRandomNumber(0, 4) * 101;
-            // Randon row number
-            var row = (getRandomNumber(1, 3) * 83) - 28;
-            // Assign gem images to array
-            if (i === 0) {
-                gemSprite = 'images/Gem Blue.png';
-            } else if (i === 1) {
-                gemSprite = 'images/Gem Green.png';
-            } else {
-                gemSprite = 'images/Gem Orange.png';
+    //Check for player enemy collisions
+    function checkCollisions(allEnemies, player) {
+        for (let enemy of allEnemies) {
+            if((player.y === enemy.y) && (enemy.x + 65/2 > player.x) && (enemy.x < player.x + 65/2)) {
+                player.moves ++;
+                //If score greater than 0 remove 1 point for collision
+                if(player.score > 0) {
+                    player.score--;
+                }
+                player.lives--;
+                //Call game over modal if no more lives
+                if(player.lives <= 0) {
+                    toggleFinishModal();
+                    stopTimer();
+                }
+                player.reset();
             }
-            // Create new gem with location details and push to gem array
-            let newGem = new Gem(col, row, gemSprite);
-
-            allGems.push(newGem);
         }
     }
 
     // Call method to create GEM instances in array
-    createGems();
+    gem.createGems();
 
     // This listens for key presses and sends the keys to your
     // Player.handleInput() method. You don't need to modify this.
@@ -259,6 +227,14 @@
         };
         player.handleInput(allowedKeys[e.keyCode]);
     });
+
+    // Random number generator from MDN documentation
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/
+    function getRandomNumber(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 
     // Adds time to timer variable
     function addTime() {
@@ -287,7 +263,7 @@
     // Toggles hide class from finish modal to show and hide
     function toggleFinishModal() {
         winnerModal.classList.toggle('hide');
-        if(player.lives > 0){
+        if(player.lives > 0) {
             winnerHeader.innerHTML = `<h3>Congratulations you are a winner</h3>`;
             winnerResults.innerHTML =  `<span>${player.score} Points </br></br>${timer} Time </span>`;
         }
